@@ -77,7 +77,7 @@ class Database:
             from pathlib import Path
             async with self.pool.acquire() as conn:
                 auth_tokens_exists = await conn.fetchval(
-                    "SELECT EXISTS (SELECT FROM information_schema.tables WHERE table_schema = 'public' AND table_name = 'auth_tokens')"
+                    "SELECT EXISTS (SELECT FROM information_schema.tables WHERE table_schema = current_schema() AND table_name = 'auth_tokens')"
                 )
                 if not auth_tokens_exists:
                     logger.info("📋 Core table 'auth_tokens' does not exist. Running auth_schema.sql...")
