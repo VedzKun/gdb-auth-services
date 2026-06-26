@@ -44,6 +44,11 @@ class UserServiceClient:
                 
                 if response.status_code == 200:
                     data = response.json()
+                    # The verify endpoint returns is_valid=True/False.
+                    # Return None if credentials are invalid so auth_service treats it as failed.
+                    if not data.get("is_valid", False):
+                        logger.warning(f"Invalid credentials for user {login_id}")
+                        return None
                     logger.info(f"Verified credentials for user {login_id}")
                     return data
                 elif response.status_code == 401:

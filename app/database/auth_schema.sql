@@ -1,8 +1,18 @@
 -- ================================================================
 -- AUTH SERVICE DATABASE SCHEMA
--- Database: gdb_auth_db
+-- Database: gdb_production_db (shared Render database)
 -- Purpose: JWT token management and authentication audit logging
 -- ================================================================
+
+-- ================================================================
+-- SCHEMA
+-- ================================================================
+
+-- Create the auth_service schema if it doesn't exist
+CREATE SCHEMA IF NOT EXISTS auth_service;
+
+-- Set search path for this script
+SET search_path TO auth_service, public;
 
 -- ================================================================
 -- ENUMS
