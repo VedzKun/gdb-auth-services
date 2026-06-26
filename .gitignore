@@ -1,11 +1,18 @@
 # ===========================
-# Environment & Secrets
+# Environment & Secrets - NEVER COMMIT
 # ===========================
 .env
 .env.*
-!.env.example
-!.env.sample
+.env.local
+.env.development
+.env.production
+.env.staging
+.env.test
+.env.example
+.env.sample
 *.env
+env/
+.envrc
 
 # ===========================
 # Python
