@@ -18,18 +18,22 @@ SET search_path TO auth_service, public;
 -- ENUMS
 -- ================================================================
 
-CREATE TYPE auth_action_enum AS ENUM (
-    'LOGIN_SUCCESS',
-    'LOGIN_FAILURE',
-    'TOKEN_REVOKED'
-);
+-- Use DO block to safely create enum type (IF NOT EXISTS not supported for types)
+DO $$ BEGIN
+    CREATE TYPE auth_action_enum AS ENUM (
+        'LOGIN_SUCCESS',
+        'LOGIN_FAILURE',
+        'TOKEN_REVOKED'
+    );
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
 
 
 -- ================================================================
 -- AUTH TOKENS TABLE
 -- Stores JWT token metadata for revocation and tracking
 -- ================================================================
-CREATE TABLE auth_tokens (
+CREATE TABLE IF NOT EXISTS auth_tokens (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id BIGINT NOT NULL,
     login_id VARCHAR(255) NOT NULL,
@@ -52,7 +56,7 @@ CREATE INDEX IF NOT EXISTS idx_auth_tokens_is_revoked ON auth_tokens(is_revoked)
 -- AUTH AUDIT LOGS TABLE
 -- Complete audit trail of all authentication attempts
 -- ================================================================
-CREATE TABLE auth_audit_logs (
+CREATE TABLE IF NOT EXISTS auth_audit_logs (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     login_id VARCHAR(255) NOT NULL,
     user_id BIGINT,
@@ -74,7 +78,7 @@ CREATE INDEX IF NOT EXISTS idx_auth_audit_logs_created_at ON auth_audit_logs(cre
 -- ================================================================
 
 -- Active Tokens View (not revoked and not expired)
-CREATE VIEW active_auth_tokens AS
+CREATE OR REPLACE VIEW active_auth_tokens AS
 SELECT
     id,
     user_id,
@@ -88,7 +92,7 @@ WHERE is_revoked = FALSE
 
 
 -- Recent Logins View (last 30 days)
-CREATE VIEW recent_auth_logins AS
+CREATE OR REPLACE VIEW recent_auth_logins AS
 SELECT
     id,
     login_id,
@@ -103,7 +107,7 @@ ORDER BY created_at DESC;
 
 
 -- Failed Logins View (for security monitoring)
-CREATE VIEW failed_auth_logins AS
+CREATE OR REPLACE VIEW failed_auth_logins AS
 SELECT
     id,
     login_id,
