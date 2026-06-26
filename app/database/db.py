@@ -33,7 +33,7 @@ class Database:
         # Note: On Render, we use a shared database with schemas per service.
         # We do NOT attempt to create a new database (requires superuser).
         try:
-            self.pool = await asyncpg.create_pool(init=set_schema_search_path, 
+            self.pool = await asyncpg.create_pool(setup=set_schema_search_path, 
                 host=settings.DATABASE_HOST,
                 port=settings.DATABASE_PORT,
                 database=settings.DATABASE_NAME,
