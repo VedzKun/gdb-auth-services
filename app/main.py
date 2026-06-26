@@ -19,6 +19,7 @@ from app.exceptions.auth_exceptions import AuthenticationException
 
 
 # Configure logging
+# Render redeploy trigger: schema fix applied
 logging.basicConfig(
     level=settings.LOG_LEVEL,
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
@@ -143,3 +144,4 @@ if __name__ == "__main__":
         reload=settings.DEBUG,
         log_level=settings.LOG_LEVEL.lower(),
     )
+
